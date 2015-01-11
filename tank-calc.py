@@ -9,8 +9,12 @@ import math
 def centimetersFromInches(inches):
     return(inches*2.54)
 
+def gramsFromPounds(pounds):
+    return(pounds * 453.592)
+
 # change these variables:
 
+shearForceGoal = gramsFromPounds(30)
 centimetersPerFastener = 1.3 # use cm This is the distance between the center hole of each fastener in your seam of your tank in the hight direction. 
 circumference = centimetersFromInches(90.0) # use cm, the final cercumference of your tank ( after over laps of seams)
 height = centimetersFromInches(96.0) # use cm, this is the Highes levle you will fill your tank to 
@@ -54,6 +58,18 @@ def costOfSalt(massOfSalt, dollarsPerGramOfSalt):
     return(massOfSalt * dollarsPerGramOfSalt)
 
 
+def boltsCapabuilityAtHeight( height, diameter, density, shearForceGoal):
+    
+    volumeAboveOneSquare_cm = height * diameter * 1  # all in cm so returns cm^3
+    weightOnOneSquare_cm = volumeAboveOneSquare_cm * density # in grams
+    weightAlowedOnTheBoltArea = shearForceGoal * 2 # shear force goal must be given in grams!
+    heightCoverdByBolt = weightAlowedOnTheBoltArea / weightOnOneSquare_cm 
+
+    return (heightCoverdByBolt)
+
+
+
+
 diameter = diameterFromCircumference(circumference) # cm
 radius = radiusFromDiameter(diameter) #cm
 hoopAreaPerFastener = hoopAreaPerFastenerFromDiameterAndCentimetersPerFastener(diameter,centimetersPerFastener) #cm
@@ -65,7 +81,7 @@ weightOnHoopArea = wieghtOnHoopAreaFromVolumeAboveHoopAreaPerFastenerAndDensity(
 shearForce = shearForceFromWeightOnHoopArea(weightOnHoopArea)  # return in grams
 massOfSalt = massOfSalt(weight)
 costOfSalt = costOfSalt(massOfSalt, dollarsPerGramOfSalt)
-
+heightCoveredByBottomBolt = boltsCapabuilityAtHeight( height, diameter, densityOfSatruatedSaltWater, shearForceGoal)
 
 print ('%10.2f cm    circumference' % circumference)
 print ('%10.2f cm    height' % height)
@@ -83,6 +99,30 @@ print ('%10.2f kg    shear force' % (shearForce / 1000.0))
 print ('%10.2f lbs   shear force' % poundsFromGrams(shearForce))
 print ('%10.2f kg    mass Of Salt' % (massOfSalt / 1000.0))
 print ('%10.2f $     cost of total salt needed to saturate full tank in dollars' % costOfSalt)
+
+print ('height coverd by bottom bolt ', heightCoveredByBottomBolt)
+
+print(' ')
+print 'distance to next bolt starting at the bottom '
+
+heightLeft = height
+boltNumber = 0
+distanceFromBottom = 0 
+
+openSCadListOfBoltPlacements = []
+
+while heightLeft > 0:
+    boltNumber += 1 
+    heightCoveredByBolt = boltsCapabuilityAtHeight( heightLeft, diameter, densityOfSatruatedSaltWater, shearForceGoal)
+    distanceFromBottom += heightCoveredByBolt
+    print boltNumber, '  ', heightCoveredByBolt, '  ', distanceFromBottom
+    openSCadListOfBoltPlacements.append(distanceFromBottom)
+    heightLeft -= heightCoveredByBolt
+
+print openSCadListOfBoltPlacements
+
+print len(openSCadListOfBoltPlacements)
+    
 
 
 
