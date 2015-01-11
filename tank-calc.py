@@ -58,14 +58,15 @@ def costOfSalt(massOfSalt, dollarsPerGramOfSalt):
     return(massOfSalt * dollarsPerGramOfSalt)
 
 
-def boltsCapabuilityAtHeight( height, diameter, density, shearForceGoal):
-    
-    volumeAboveOneSquare_cm = height * diameter * 1  # all in cm so returns cm^3
-    weightOnOneSquare_cm = volumeAboveOneSquare_cm * density # in grams
-    weightAlowedOnTheBoltArea = shearForceGoal * 2 # shear force goal must be given in grams!
-    heightCoverdByBolt = weightAlowedOnTheBoltArea / weightOnOneSquare_cm 
+def boltsCapabilityAtHeight( height, diameter, density, shearForceGoal):
+   
+    forceOnOneCm = gPerSqCmAtHeight(density,height)*1*diameter
+    BoltSeparation = shearForceGoal/(forceOnOneCm/2)
 
-    return (heightCoverdByBolt)
+    return (BoltSeparation)
+
+def gPerSqCmAtHeight(density,height):
+    return(density*height)
 
 
 
@@ -81,7 +82,7 @@ weightOnHoopArea = wieghtOnHoopAreaFromVolumeAboveHoopAreaPerFastenerAndDensity(
 shearForce = shearForceFromWeightOnHoopArea(weightOnHoopArea)  # return in grams
 massOfSalt = massOfSalt(weight)
 costOfSalt = costOfSalt(massOfSalt, dollarsPerGramOfSalt)
-heightCoveredByBottomBolt = boltsCapabuilityAtHeight( height, diameter, densityOfSatruatedSaltWater, shearForceGoal)
+heightCoveredByBottomBolt = boltsCapabilityAtHeight( height, diameter, densityOfSatruatedSaltWater, shearForceGoal)
 
 print ('%10.2f cm    circumference' % circumference)
 print ('%10.2f cm    height' % height)
@@ -113,7 +114,7 @@ openSCadListOfBoltPlacements = []
 
 while heightLeft > 0:
     boltNumber += 1 
-    heightCoveredByBolt = boltsCapabuilityAtHeight( heightLeft, diameter, densityOfSatruatedSaltWater, shearForceGoal)
+    heightCoveredByBolt = boltsCapabilityAtHeight( heightLeft, diameter, densityOfSatruatedSaltWater, shearForceGoal)
     distanceFromBottom += heightCoveredByBolt
     print boltNumber, '  ', heightCoveredByBolt, '  ', distanceFromBottom
     openSCadListOfBoltPlacements.append(distanceFromBottom)
