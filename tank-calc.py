@@ -21,6 +21,8 @@ height = centimetersFromInches(96.0) # use cm, this is the Highes levle you will
 densityOfSatruatedSaltWater = 1.202 # use g/ml  or g/cubic-cm , this is for NaCl 
 dollarsPerGramOfSalt =  5.0 / (20.0 * 1000.0) # use cad per gram .... ie  5 dolars / 20k grams 
 
+minumumDistanceBetweenBolts = 2 #
+
 def diameterFromCircumference(circumference):
     return(circumference / math.pi)
 
@@ -115,6 +117,8 @@ openSCadListOfBoltPlacements = []
 while heightLeft > 0:
     boltNumber += 1 
     heightCoveredByBolt = boltsCapabilityAtHeight( heightLeft, diameter, densityOfSatruatedSaltWater, shearForceGoal)
+    if heightCoveredByBolt > minumumDistanceBetweenBolts:
+        heightCoveredByBolt = minumumDistanceBetweenBolts
     distanceFromBottom += heightCoveredByBolt
     print boltNumber, '  ', heightCoveredByBolt, '  ', distanceFromBottom
     openSCadListOfBoltPlacements.append(distanceFromBottom)
